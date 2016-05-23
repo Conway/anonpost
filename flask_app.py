@@ -1,10 +1,8 @@
 import logging
 import os
 import pyotp
-import random
 import re
 import requests
-import string
 import sys
 from decorators import admin_required, check_bans
 from flask import Flask, g, redirect, render_template, request, send_from_directory, session, url_for
@@ -16,6 +14,7 @@ from models import db, IPBan, Settings, Submission
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 if os.environ['PRODUCTION'] == 'TRUE':
     heroku = Heroku(app)
@@ -28,7 +27,6 @@ db.init_app(app)
 
 @app.before_first_request
 def startup():
-    app.config['SECRET_KEY'] = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(64)])
 
     # db initializations
     db.create_all()
@@ -244,12 +242,6 @@ def new_google_authentication():
     totp = pyotp.TOTP(g.settings.secret_key)
     uri = totp.provisioning_uri("admin")
     return uri
-
-@app.route('/scramble')
-@admin_required
-def scramble_cookies():
-    app.config['SECRET_KEY'] = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(64)])
-    return "done"
 
 @app.route('/robots.txt')
 def static_from_root():
