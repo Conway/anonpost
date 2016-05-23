@@ -1,0 +1,3 @@
+# anonpost
+
+Anonpost allows users to anonymously post messages. These messages can be posted to the location of the owner's choosing either via a direct POST request, or by POSTing to IFTTT and creating a recipe. Some example uses of anonpost include anonymous emailing, anonymous complaints, anonymous tips, and more. The only things that are recorded upon submission are the message, the user-agent and the IP address. Other features include IP bans (timed and untimed; loud and quiet), and prefiltering (removes posts based on a regex search).

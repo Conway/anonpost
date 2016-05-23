@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}
+Login
+{% endblock %}
+{% block content %}
+    <form action="" method="POST" name="login">
+        {{ form.hidden_tag() }}
+        <div>
+        {% if failure == True %}
+            </br>
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error: </span>
+                <span class="help-inline">Invalid Token</span>
+            </div>
+        {% endif %}
+        {{ form.password.label }}
+        {{ form.password(class="form-control") }}
+        </br>
+        {{ form.submit(class="btn btn-default") }}
+        </div>
+        </br>
+    </form>
+{% endblock %}

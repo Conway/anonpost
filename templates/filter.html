@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}
+Edit Filter
+{% endblock %}
+{% block content %}
+    <h1>Manage the post filter</h1>
+    <form action="" method="POST" name="fiter">
+        {{ form.hidden_tag() }}
+        <div>
+        {% if issue == True %}
+            </br>
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error: </span>
+                <span class="help-inline">Invalid regex</span>
+            </div>
+        {% endif %}
+        {{ form.regex.label }}
+        {{ form.regex(class="form-control") }}
+        </br>
+        {{ form.submit(class="btn btn-default") }}
+        </div>
+
+
+        </br>
+    </form>
+{% endblock %}

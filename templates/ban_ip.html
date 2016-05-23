@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}
+Ban IP
+{% endblock %}
+{% block content %}
+    <form action="" method="POST" name="submission">
+        {{ form.hidden_tag() }}
+        <div>
+        {% if form.errors %}
+            {% for error in form.errors %}
+                </br>
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    <span class="help-inline">{{ error }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if message %}
+            <h4>IP Ban created/updated.</h4>
+        {% else %}
+            {{ form.ip.label }}
+            {{ form.ip(class="form-control") }}
+            </br>
+            {{ form.ban_type.label }}
+            {{ form.ban_type }}
+            </br>
+            {{ form.public_ban_note.label }}
+            {{ form.public_ban_note(class="form-control") }}
+            </br>
+            {{ form.private_ban_note.label }}
+            {{ form.private_ban_note(class="form-control") }}
+            </br>
+            {{ form.expiration.label }}
+            {{ form.expiration(class="form-control") }}
+            </br>
+            {{ form.ban(class="btn btn-default") }}
+        {%endif%}
+        </div>
+
+
+        </br>
+    </form>
+{% endblock %}

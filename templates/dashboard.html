@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block content %}
+
+<script>
+    $(document).ready(function(){
+        $('#show').click(function(){
+            $("img").toggle();
+            if( $("#show").val().substring(0,4)=='show'){
+                $("#show").attr("value", "hide Google Authenticator qr code");
+            }
+            else{
+                $("#show").attr("value", "show Google Authenticator qr code");
+            }
+
+        });
+    });
+
+    $(document).ready(function(){
+        $('#reset').click(function(){
+            $.get('/newga',
+                  function(data, status){
+                      $("#qr").attr("src", "http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl="+data);
+                      $("#qr").show();
+                      $("#update").append('</br>');
+                      $("#update").append("<div class='alert alert-danger' role='alert' id='alert'>");
+                      $("#alert").append("<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>");
+                      $("#alert").append("<span class='sr-only'>Warning:</span>");
+                      $("#alert").append("<span class='help-inline'> This token is now active. You must save this to Google Authenticator before logging off.</span>");
+                      $("#update").append('</div>');
+                  });
+            $("#qr").show();
+            $("#show").attr("value", "hide Google Authenticator qr code")
+            $("#show").attr("id", "show");
+            $("#reset").prop("disabled", true);
+            $("#show").prop("disabled", true);
+        });
+    });
+</script>
+
+<h1>Admin Dashboard</h1>
+
+<div id="submissions">
+    <h2>Submissions</h2>
+    <input type="button" value="all submissions" class="btn btn-default" onClick="window.open('/admin');">
+    <br></br>
+    <input type="button" value="unmoderated submissions" class="btn btn-default" onClick="window.open('/admin?status=unset');">
+    <br></br>
+</div>
+
+<div id="bans">
+    <h2>bans</h2>
+    <input type="button" value="ip bans" class="btn btn-default" onClick="window.open('/iplisting');">
+    <br></br>
+    <input type="button" value="ban ip" class="btn btn-default" onClick="window.open('/banip');">
+    <br></br>
+</div>
+
+<div id="settings">
+    <h2>settings</h2>
+    <input type="button" value="update filter" class="btn btn-default" onClick="window.open('/filter');">
+    <br></br>
+    <input type="button" value="reset Google Authenticator token" class="btn btn-default" id="reset" onClick="">
+    <br></br>
+    <input type="button" value="show Google Authenticator qr code" class="btn btn-default" id="show" onClick="">
+    <br></br>
+    <div id="update"></div>
+    <img src='http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl={{uri}}' id='qr' style="display: none;"></img>
+</div>
+{% endblock %}

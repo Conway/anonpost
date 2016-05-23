@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}
+Admin View
+{% endblock %}
+{% block content %}
+<script>
+    $(document).ready(function(){
+        $('.approve').click(function(){
+
+            var val = $(this).closest('tr').children('td:eq(0)').text();
+
+            $.get('/approve/'+val+"/", alert('success!'));
+        });
+
+    });
+    $(document).ready(function(){
+        $('.reject').click(function(){
+
+            var val = $(this).closest('tr').children('td:eq(0)').text();
+            var to_reject = "/reject/" + val + "/";
+            $.get('/reject/'+val+"/", alert('success!'));
+        });
+
+    });
+</script>
+<table class="table">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>body</th>
+            <th>created</th>
+            <th>status</th>
+            <th>ip</th>
+            <th>user agent</th>
+            <th>action</th>
+        <tr>
+    </thead>
+    <tbody>
+        {% for item in results %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.body }}</td>
+            <td>{{ item.created }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.ip }}</td>
+            <td>{{ item.u_a }}</td>
+            <td>
+                <input type="button" value="approve" class="approve" name="approve" onclick="/approve/{{item.id}}">
+                <input type="button" value="reject" class="reject" name="reject" onclick="/reject/{{item.id}}">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

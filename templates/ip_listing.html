@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script>
+    $(document).ready(function(){
+        $('.unban').click(function(){
+            var val = $(this).closest('tr').children('td:eq(0)').text();
+            $.get('/unbanip/'+val+"/", alert('success!'));
+        });
+
+    });
+    $(document).ready(function(){
+        $('.ban').click(function(){
+            var val = $(this).closest('tr').children('td:eq(0)').text();
+            $.get('/simplebanip/'+val+"/", alert('success!'));
+        });
+
+    });
+</script>
+<table class="table">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>ip</th>
+            <th>issued</th>
+            <th>ban type</th>
+            <th>private ban note</th>
+            <th>public ban note</th>
+            <th>issued</th>
+            <th>duration</th>
+            <th>status</th>
+            <th>actions</th>
+        <tr>
+    </thead>
+    <tbody>
+        {% for item in results %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.ip }}</td>
+            <td>{{ item.issued }}</td>
+            <td>{{ item.ban_type }}</td>
+            <td>{{ item.ban_note_private }}</td>
+            <td>{{ item.ban_note_public }}</td>
+            <th>{{ item.issued }}</th>
+            <td>{{ item.duration }}</td>
+            <td>{{ item.active }}</td>
+            <td>
+                {% if item.active %}
+                <input type="button" value="unban" class="unban" name="unban" onclick="/simpleipban/{{item.id}}">
+                {% else %}
+                <input type="button" value="ban" class="ban" name="ban" onclick="/unbanip/{{item.id}}">
+                {% endif %}
+            <input type="button" value="submissions" class="submissions" name="submissions" onClick="window.open('/admin?ip={{item.ip}}');">
+            <input type="button" value="edit" class="edit" name="edit" onClick="window.open('/editip/{{item.id}}');">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

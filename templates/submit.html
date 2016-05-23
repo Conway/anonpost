@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}
+Submit Post
+{% endblock %}
+{% block content %}
+    <h1>Submit an anonymous post</h1>
+    <form action="" method="POST" name="submission">
+        {{ form.hidden_tag() }}
+        <div>
+        {% if form.body.errors %}
+            {% for error in form.body.errors %}
+                </br>
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    <span class="help-inline">{{ error }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if message %}
+            <h4>Your message has been submitted. It will be reviewed within 24 hours.</h4>
+        {% else %}
+            {{ form.body.label }}
+            {{ form.body(class="form-control") }}
+            </br>
+            {{ form.submit(class="btn btn-default") }}
+        {%endif%}
+        </div>
+
+
+        </br>
+    </form>
+{% endblock %}
