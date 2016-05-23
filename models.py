@@ -17,7 +17,7 @@ class IPBan(db.Model):
     __tablename__ = 'ipbans'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ip = db.Column(db.String, nullable=False)
-    ban_type = db.Column(db.Enum('quiet', 'public'))
+    ban_type = db.Column(db.Enum('quiet', 'public', name="bantypes"))
     ban_note_private = db.Column(db.String)
     ban_note_public = db.Column(db.String)
     issued = db.Column(db.Integer, default=int(time.time()))
