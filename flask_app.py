@@ -8,6 +8,7 @@ import string
 import sys
 from decorators import admin_required, check_bans
 from flask import Flask, g, redirect, render_template, request, send_from_directory, session, url_for
+from flask.ext.heroku import Heroku
 from forms import BanIPForm, FilterForm, LoginForm, SubmissionForm
 from models import db, IPBan, Settings, Submission
 
@@ -17,7 +18,7 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
 if os.environ['PRODUCTION'] == 'TRUE':
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+    heroku = Heroku(app)
 else:
     app.debug=True
     BASE_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
