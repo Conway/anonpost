@@ -2,7 +2,6 @@
 Flask==0.10.1
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
-gunicorn==19.5.0
 pyotp==2.1.1
 requests==2.9.1
 SQLAlchemy==1.0.12
