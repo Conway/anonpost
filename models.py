@@ -9,7 +9,7 @@ class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     body = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.Enum('approved', 'removed', 'unset', 'autoremoval', 'quietbanremoval'), default='unset')
+    status = db.Column(db.Enum('approved', 'removed', 'unset', 'autoremoval', 'quietbanremoval', name="states"), default='unset')
     ip = db.Column(db.String)
     u_a = db.Column(db.String)
 
