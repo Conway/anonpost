@@ -254,4 +254,5 @@ def post_to_ifttt(post_body):
     requests.post(os.environ['POST_URL'], data = {'value1':post_body})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
