@@ -27,7 +27,6 @@ db.init_app(app)
 
 @app.before_first_request
 def startup():
-
     # db initializations
     db.create_all()
     settings = Settings(secret_key=pyotp.random_base32())
@@ -49,7 +48,6 @@ def load_globals():
 
 
 @app.route('/', methods=['GET', 'POST'])
-@check_bans
 def submit():
     if request.headers.getlist("X-Forwarded-For"):
         ip = request.headers.getlist("X-Forwarded-For")[0]
@@ -75,7 +73,7 @@ def submit():
         else:
             status = 'unset'
 
-        submission = Submission(body=text, ip=ip, u_a=request.user_agent.string, status=status)
+        submission = Submission(body=text, ip=str(hash(ip)), u_a=str(hash(request.user_agent.string)), status=status)
         db.session.add(submission)
         db.session.commit()
         return render_template("submit.html", form=form, admin=g.admin, message=True)
@@ -83,7 +81,6 @@ def submit():
         return render_template('submit.html', form=form, admin=g.admin)
 
 @app.route('/adminon', methods=['GET', 'POST'])
-@check_bans
 def admin_on():
     '''turns the admin mode on'''
     form = LoginForm(request.form)
@@ -101,7 +98,6 @@ def admin_on():
         return render_template("login_form.html", form=form, failure=True)
 
 @app.route('/adminoff')
-@admin_required
 def admin_off():
     '''turns admin mode off'''
     session['admin'] = None
@@ -109,7 +105,6 @@ def admin_off():
     return "admin disabled"
 
 @app.route('/admin')
-@admin_required
 def admin():
     '''returns a listing of all posts'''
     if request.args.get('status'):
@@ -121,7 +116,6 @@ def admin():
     return render_template("admin_view.html", results=results)
 
 @app.route('/approve/<int:post_id>/')
-@admin_required
 def approve(post_id):
     '''approves a specific post - not meant to be viewed, only for requests'''
     post = Submission.query.filter_by(id = post_id).first()
@@ -131,7 +125,6 @@ def approve(post_id):
     return "success"
 
 @app.route('/reject/<int:post_id>/')
-@admin_required
 def reject(post_id):
     '''rejects a specific post - not meant to be viewed, only for requests'''
     submission = Submission.query.filter_by(id = post_id).first()
@@ -157,7 +150,7 @@ def ban_ip():
     if request.method=='GET':
         return render_template("ban_ip.html", form=form)
     else:
-        ip = IPBan(ip=form.ip.data, ban_type=form.ban_type.data, ban_note_private=form.private_ban_note.data, ban_note_public=form.public_ban_note.data, duration=form.expiration.data)
+        ip = IPBan(ip=str(hash(form.ip.data)), ban_type=form.ban_type.data, ban_note_private=form.private_ban_note.data, ban_note_public=form.public_ban_note.data, duration=form.expiration.data)
         db.session.add(ip)
         db.session.commit()
         return redirect(url_for('list_ips'))
@@ -185,7 +178,6 @@ def edit_ip(ip_id):
         return redirect(url_for('list_ips'))
 
 @app.route('/unbanip/<int:ip_id>/')
-@admin_required
 def unban_ip(ip_id):
     obj = IPBan.query.filter_by(id=ip_id).first()
     obj.active = False
@@ -193,7 +185,6 @@ def unban_ip(ip_id):
     return "unbanned"
 
 @app.route('/simplebanip/<int:ip_id>/')
-@admin_required
 def simple_ban_ip(ip_id):
     '''sets a ban as active again for ip listing'''
     obj = IPBan.query.filter_by(id=ip_id).first()
@@ -203,21 +194,16 @@ def simple_ban_ip(ip_id):
 
 @app.route('/getga')
 def get_google_authenticator():
-    if g.settings.shown == False:
-        totp = pyotp.TOTP(g.settings.secret_key)
-        return "<img src='http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl={0}'>".format(totp.provisioning_uri("admin"))
-    else:
-        return redirect(url_for('admin_on'))
+    totp = pyotp.TOTP(g.settings.secret_key)
+    return "<img src='http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl={0}'>".format(totp.provisioning_uri("admin"))
 
 @app.route('/dashboard')
-@admin_required
 def dashboard():
     totp = pyotp.TOTP(g.settings.secret_key)
     uri = totp.provisioning_uri("admin")
     return render_template("dashboard.html", uri=uri)
 
 @app.route('/filter', methods=["GET", "POST"])
-@admin_required
 def edit_filter():
     form = FilterForm(request.form)
     settings = Settings.query.limit(1).first()
@@ -234,7 +220,6 @@ def edit_filter():
             return render_template("filter.html", form=form, issue=True)
 
 @app.route('/newga')
-@admin_required
 def new_google_authentication():
     new_token = pyotp.random_base32()
     g.settings.secret_key = new_token
@@ -242,6 +227,10 @@ def new_google_authentication():
     totp = pyotp.TOTP(g.settings.secret_key)
     uri = totp.provisioning_uri("admin")
     return uri
+
+@app.route('/banned')
+def preview_ban_page():
+    return render_template("suspended.html", message="The ban message would appear here", ip="0.0.0.0", u_a="test user agent string")
 
 @app.route('/robots.txt')
 def static_from_root():
